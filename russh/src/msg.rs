@@ -14,7 +14,7 @@
 //
 // https://tools.ietf.org/html/rfc4253#section-12
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(all(target_arch = "wasm32", not(target_os = "wasi"))))]
 pub use server::*;
 
 use crate::{strict_kex_violation, Error};
@@ -88,7 +88,7 @@ pub const SSH_OPEN_UNKNOWN_CHANNEL_TYPE: u8 = 3;
 #[allow(dead_code)]
 pub const SSH_OPEN_RESOURCE_SHORTAGE: u8 = 4;
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(all(target_arch = "wasm32", not(target_os = "wasi"))))]
 mod server {
     // https://tools.ietf.org/html/rfc4256#section-5
     pub const USERAUTH_INFO_REQUEST: u8 = 60;

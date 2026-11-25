@@ -1,5 +1,5 @@
 use ssh_key::{Certificate, HashAlg, PublicKey};
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(all(target_arch = "wasm32", not(target_os = "wasi"))))]
 use {
     crate::helpers::AlgorithmExt, ssh_encoding::Decode, ssh_key::Algorithm,
     ssh_key::public::KeyData,
@@ -42,7 +42,7 @@ impl From<PublicKey> for PublicKeyOrCertificate {
 }
 
 impl PublicKeyOrCertificate {
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(all(target_arch = "wasm32", not(target_os = "wasi"))))]
     pub(crate) fn decode(pubkey_algo: &str, buf: &[u8]) -> Result<Self, ssh_key::Error> {
         crate::keys::key::check_cert_nesting(buf)?;
         let mut reader = buf;

@@ -20,14 +20,14 @@ where
     handle: tokio::sync::oneshot::Receiver<T>,
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(target_os = "wasi")))]
 macro_rules! spawn_impl {
     ($fn:expr) => {
         wasm_bindgen_futures::spawn_local($fn)
     };
 }
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(all(target_arch = "wasm32", not(target_os = "wasi"))))]
 macro_rules! spawn_impl {
     ($fn:expr) => {
         tokio::spawn($fn)

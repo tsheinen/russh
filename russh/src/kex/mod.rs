@@ -186,7 +186,7 @@ pub(crate) trait KexAlgorithmImplementor {
         Err(Error::KexInit)
     }
 
-    #[cfg_attr(target_arch = "wasm32", allow(dead_code))]
+    #[cfg_attr(all(target_arch = "wasm32", not(target_os = "wasi")), allow(dead_code))]
     fn server_dh(&mut self, exchange: &mut Exchange, payload: &[u8]) -> Result<(), Error>;
 
     fn client_dh(

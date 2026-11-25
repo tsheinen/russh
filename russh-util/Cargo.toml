@@ -12,10 +12,13 @@ repository = "https://github.com/warp-tech/russh"
 [dependencies]
 tokio = { workspace = true, features = ["sync", "macros"] }
 
-[target.'cfg(target_arch = "wasm32")'.dependencies]
+[target.'cfg(all(target_arch = "wasm32", not(target_os = "wasi")))'.dependencies]
 web-time = "1"
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4.43"
+
+[target.'cfg(target_os = "wasi")'.dependencies]
+tokio = { workspace = true, features = ["rt", "time"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 tokio = { workspace = true, features = ["io-util", "rt-multi-thread", "rt"] }

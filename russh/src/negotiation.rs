@@ -27,12 +27,12 @@ use crate::kex::{
 };
 use crate::keys::key::safe_rng;
 use crate::parsing::ensure_end;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(all(target_arch = "wasm32", not(target_os = "wasi"))))]
 use crate::server::Config;
 use crate::sshbuffer::PacketWriter;
 use crate::{cipher, compression, kex, mac, msg, AlgorithmKind, Error};
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(target_os = "wasi")))]
 /// WASM-only stub
 pub struct Config {
     keys: Vec<PrivateKey>,
@@ -42,7 +42,7 @@ pub struct Config {
 #[derive(Debug, Clone)]
 pub struct Names {
     pub kex: kex::Name,
-    #[cfg_attr(target_arch = "wasm32", allow(dead_code))]
+    #[cfg_attr(all(target_arch = "wasm32", not(target_os = "wasi")), allow(dead_code))]
     pub key: Algorithm,
     pub client_cipher: cipher::Name,
     pub server_cipher: cipher::Name,

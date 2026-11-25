@@ -38,15 +38,16 @@ use std::task::{Context, Poll};
 use bytes::Bytes;
 use client::GexParams;
 use futures::future::Future;
-use log::{debug, error, info, warn};
+use log::{debug, error, info};
 use msg::{is_kex_msg, validate_client_msg_strict_kex};
 use russh_util::runtime::JoinHandle;
 use russh_util::time::Instant;
 use ssh_key::{Certificate, PrivateKey};
 use tokio::io::{AsyncRead, AsyncWrite, AsyncWriteExt};
+#[cfg(not(target_arch = "wasm32"))]
 use tokio::net::{TcpListener, ToSocketAddrs};
 use tokio::pin;
-use tokio::sync::{broadcast, mpsc};
+use tokio::sync::broadcast;
 
 use crate::cipher::{OpeningKey, clear};
 use crate::kex::dh::groups::{BUILTIN_SAFE_DH_GROUPS, DH_GROUP14, DhGroup};
@@ -936,6 +937,7 @@ pub trait Server {
 
     /// Run a server on a specified `tokio::net::TcpListener`. Useful when dropping
     /// privileges immediately after socket binding, for example.
+    #[cfg(not(target_arch = "wasm32"))]
     fn run_on_socket(
         &mut self,
         config: Arc<Config>,
@@ -955,7 +957,7 @@ pub trait Server {
                 );
             }
 
-            let (error_tx, mut error_rx) = mpsc::unbounded_channel();
+            let (error_tx, mut error_rx) = tokio::sync::mpsc::unbounded_channel();
 
             loop {
                 tokio::select! {
@@ -977,7 +979,7 @@ pub trait Server {
                                     #[allow(clippy::collapsible_if)]
                                     if config.nodelay {
                                         if let Err(e) = socket.set_nodelay(true) {
-                                            warn!("set_nodelay() failed: {e:?}");
+                                            log::warn!("set_nodelay() failed: {e:?}");
                                         }
                                     }
 
@@ -1034,6 +1036,7 @@ pub trait Server {
 
     /// Run a server.
     /// This is a convenience function; consider using `run_on_socket` for more control.
+    #[cfg(not(target_arch = "wasm32"))]
     fn run_on_address<A: ToSocketAddrs + Send>(
         &mut self,
         config: Arc<Config>,

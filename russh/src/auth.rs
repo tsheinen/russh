@@ -359,11 +359,11 @@ impl std::fmt::Debug for Method {
 pub struct AuthRequest {
     initial_methods: MethodSet,
     pub methods: MethodSet,
-    #[cfg_attr(target_arch = "wasm32", allow(dead_code))]
+    #[cfg_attr(all(target_arch = "wasm32", not(target_os = "wasi")), allow(dead_code))]
     pub partial_success: bool,
     pub current: Option<CurrentRequest>,
     pub(crate) principal: Option<AuthPrincipal>,
-    #[cfg_attr(target_arch = "wasm32", allow(dead_code))]
+    #[cfg_attr(all(target_arch = "wasm32", not(target_os = "wasi")), allow(dead_code))]
     pub rejection_count: usize,
     pub(crate) banner_sent: bool,
 }
@@ -378,7 +378,7 @@ pub(crate) struct AuthPrincipal {
 #[doc(hidden)]
 #[derive(Debug)]
 pub enum CurrentRequest {
-    #[cfg_attr(target_arch = "wasm32", allow(dead_code))]
+    #[cfg_attr(all(target_arch = "wasm32", not(target_os = "wasi")), allow(dead_code))]
     PublicKey {
         #[allow(dead_code)]
         key: Vec<u8>,
@@ -387,7 +387,7 @@ pub enum CurrentRequest {
         sent_pk_ok: bool,
     },
     KeyboardInteractive {
-        #[cfg_attr(target_arch = "wasm32", allow(dead_code))]
+        #[cfg_attr(all(target_arch = "wasm32", not(target_os = "wasi")), allow(dead_code))]
         submethods: String,
     },
     GssapiWithMic,

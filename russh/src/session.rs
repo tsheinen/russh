@@ -67,7 +67,7 @@ pub(crate) struct CommonSession<Config> {
     pub config: Config,
     pub encrypted: Option<Encrypted>,
     pub auth_method: Option<auth::Method>,
-    #[cfg_attr(target_arch = "wasm32", allow(dead_code))]
+    #[cfg_attr(all(target_arch = "wasm32", not(target_os = "wasi")), allow(dead_code))]
     pub(crate) auth_attempts: usize,
     pub packet_writer: PacketWriter,
     pub remote_to_local: Box<dyn OpeningKey + Send>,

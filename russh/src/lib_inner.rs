@@ -66,7 +66,7 @@ mod parsing;
 mod session;
 
 /// Server side of this library.
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(all(target_arch = "wasm32", not(target_os = "wasi"))))]
 pub mod server;
 
 /// Client side of this library.
@@ -506,7 +506,7 @@ pub(crate) struct ChannelParams {
     sender_maximum_packet_size: u32,
     /// Has the other side confirmed the channel?
     pub confirmed: bool,
-    #[cfg_attr(target_arch = "wasm32", allow(dead_code))]
+    #[cfg_attr(all(target_arch = "wasm32", not(target_os = "wasi")), allow(dead_code))]
     wants_reply: bool,
     /// (buffer, extended stream #, data offset in buffer)
     pending_data: std::collections::VecDeque<(bytes::Bytes, Option<u32>, usize)>,
